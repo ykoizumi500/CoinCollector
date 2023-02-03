@@ -1,14 +1,21 @@
+"""Coin Collector Game
+
+コイン収集ゲーム
+"""
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python3
-import pygame
 import sys
 import random
+import pygame
 
 # 画面のサイズ
 SCREEN = pygame.Rect(0, 0, 800, 600)
 
 # プレーヤー
 class Player(pygame.sprite.Sprite):
+    """プレーヤー
+
+    """
     # 移動する速度
     speed = 10
 
@@ -18,10 +25,16 @@ class Player(pygame.sprite.Sprite):
         image = pygame.image.load(filename).convert()
         self.image = pygame.transform.scale(image, size)
         # 外縁を消す
-        self.image.set_colorkey((0,0,0))
+        self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
-    def move(self, right, down):
+    def move(self, right, down) -> None:
+        """プレーヤを移動させる。
+
+        Args:
+            right (int): 右に移動させる距離
+            down (int): 下に移動させる距離
+        """
         # プレーヤーを移動させる
         self.rect.move_ip(right * self.speed, down * self.speed)
         # 衝突時の処理
@@ -29,6 +42,9 @@ class Player(pygame.sprite.Sprite):
 
 # コイン
 class Coin(pygame.sprite.Sprite):
+    """
+        コイン
+    """
     def __init__(self, filename, size):
         super().__init__(self.containers)
         # 画像を読み込む
@@ -43,6 +59,10 @@ class Coin(pygame.sprite.Sprite):
         self.rect.centery = random.randint(100, 500)
 
 def main() -> None:
+    """ゲームの開始
+
+    ゲームを開始します。
+    """
     # 初期化
     pygame.init()
     # 画面のサイズを設定する
@@ -71,7 +91,7 @@ def main() -> None:
         screen.fill([0, 0, 0])
         dirty = all_sprites.draw(screen)
         # 画面更新
-        pygame.display.update()
+        pygame.display.update(dirty)
         for event in pygame.event.get():
             # 閉じるボタンが押されたら
             if event.type == pygame.QUIT:
@@ -85,4 +105,3 @@ def main() -> None:
         down = keystate[pygame.K_DOWN] - keystate[pygame.K_UP]
         # 移動させる
         player.move(right, down)
-

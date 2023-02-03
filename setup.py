@@ -9,7 +9,7 @@ setuptools.setup(
     install_requires=[],
     entry_points={
         'console_scripts': [
-            'coincollector=CoinCollector:main',
+            'coincollector=coin_collector:main',
         ],
     },
     author="Koizumi Yuhi",
