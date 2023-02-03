@@ -40,16 +40,22 @@ def main() -> None:
     # 画面のサイズを設定する
     screen = pygame.display.set_mode(SCREEN.size)
     pygame.display.set_caption("Coin Collector Game")
-    # すべてのスプライトをまとめる
-    all_sprites = pygame.sprite.Group()
-    # プレーヤー・コインを作る
+    # スプライトでまとめる
+    player_sprites = pygame.sprite.Group()
+    coin_sprites = pygame.sprite.Group()
+    # プレーヤーを作る
     player = Player("img/player.png", [100, 100])
-    coin = Coin("img/coin.png", [80,80])
-    # グループに追加する
-    all_sprites.add(player)
-    all_sprites.add(coin)
+    # プレーヤーをグループに追加する
+    player_sprites.add(player)
+    # 3回繰り返す
+    for _ in range(3):
+        # コインを作る
+        coin = Coin("img/coin.png", [80, 80])
+        # コインをグループに追加する
+        coin_sprites.add(coin)
     # グループを描画
-    all_sprites.draw(screen)
+    player_sprites.draw(screen)
+    coin_sprites.draw(screen)
     while True:
         # 終了させる
         for event in pygame.event.get():
