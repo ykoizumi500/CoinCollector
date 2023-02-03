@@ -35,7 +35,7 @@ class Coin(pygame.sprite.Sprite):
         image = pygame.image.load(filename).convert()
         self.image = pygame.transform.scale(image, size)
         # 外縁を消す
-        self.image.set_colorkey((0,0,0))
+        self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
         # 位置をランダムに決める
