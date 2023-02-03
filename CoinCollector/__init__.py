@@ -4,11 +4,14 @@ import pygame
 import sys
 import random
 
+# 画面のサイズ
+SCREEN = pygame.Rect(0, 0, 800, 600)
+
 def main() -> None:
     # 初期化
     pygame.init()
-
-    screen = pygame.display.set_mode([800, 600])
+    # 画面のサイズを設定する
+    screen = pygame.display.set_mode(SCREEN.size)
     pygame.display.set_caption("Coin Collector Game")
     # 画像を読み込む
     player_image = pygame.image.load("img/player.png")
