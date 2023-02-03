@@ -72,9 +72,10 @@ def main() -> None:
         dirty = all_sprites.draw(screen)
         # 画面更新
         pygame.display.update()
-        # 終了させる
         for event in pygame.event.get():
+            # 閉じるボタンが押されたら
             if event.type == pygame.QUIT:
+                # 終了させる
                 sys.exit()
         # キー操作の情報を受け取る
         keystate = pygame.key.get_pressed()
