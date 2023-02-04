@@ -6,6 +6,7 @@
 #!/usr/bin/env python3
 import sys
 import random
+import os
 import pygame
 
 # 画面のサイズ
@@ -78,11 +79,11 @@ def main() -> None:
     Player.containers = all_sprites
     Coin.containers = coin_sprites, all_sprites
     # プレーヤーを作る
-    player = Player("img/player.png", [100, 100])
+    player = Player(os.path.join("img", "player.png"), [100, 100])
     # 3回繰り返す
     for _ in range(3):
         # コインを作る
-        coin = Coin("img/coin.png", [80, 80])
+        coin = Coin(os.path.join("img", "coin.png"), [80, 80])
         # コインをグループに追加する
         coin_sprites.add(coin)
     # クロック
