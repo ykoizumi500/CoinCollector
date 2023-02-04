@@ -7,8 +7,14 @@ TITLE = "Coin Collector Game"
 # 画面のサイズ
 SCREEN_SIZE = [800, 600]
 
+# スコアのサイズ
+SCORE_SIZE = 50
+
 # フレームレート
 FRAME_RATE = 60
+
+# スコアの色
+SCORE_COLOR = [0, 0, 0]
 
 # データの場所
 DATA = "data"
@@ -24,6 +30,9 @@ COIN_SIZE = [30, 30]
 
 # コイン獲得するときの効果音
 COIN_SOUND = "coin.wav"
+
+# コイン獲得したときのスコア
+COIN_SCORE = 10
 
 # プレーヤーの画像ファイル
 PLAYER_IMAGE = "player.png"

@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
     # 移動する速度
     speed = 10
 
-    def __init__(self, image, size, screen, coin):
+    def __init__(self, image, size, screen, coin, score):
         super().__init__(self.containers)
         # 画像を読み込む
         self.image = pygame.transform.scale(image, size)
@@ -30,8 +30,10 @@ class Player(pygame.sprite.Sprite):
         self.screen = screen
         # コインの参照
         self.coin = coin
+        # スコアの参照
+        self.score = score
 
-    def move(self, right, down) -> None:
+    def move(self, right: int, down: int) -> None:
         """プレーヤを移動させる。
 
         Args:
@@ -44,6 +46,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.rect.clamp(self.screen)
         # コインに衝突したときの処理
         if pygame.sprite.spritecollide(self, self.coin, True):
+            # スコアを加える
+            self.score.add_score(settings.COIN_SCORE)
             # 効果音を鳴らす
             self.coin_sound.play()
 
@@ -89,13 +93,48 @@ class Background(pygame.sprite.Sprite):
     """背景
 
     """
-
     def __init__(self, image, size):
         super().__init__(self.containers)
         # サイズに合わせる
         self.image = pygame.transform.scale(image, size)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
+
+
+class Score(pygame.sprite.Sprite):
+    """スコア表示
+
+    """
+    def __init__(self, screen):
+        super().__init__(self.containers)
+        # フォントの設定
+        self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
+        # スコアの設定
+        self.score = 0
+        # スクリーンの参照
+        self.screen = screen
+        # スコアの描画
+        self.draw()
+
+    def draw(self) -> None:
+        """スコアの描画
+
+        """
+        # スコアの表示形式を設定する
+        self.image = self.sysfont.render(f"SCORE {self.score}", True, settings.SCORE_COLOR)
+        # Rect（四角）オブジェクトも生成しておく
+        self.rect = self.image.get_rect()
+
+    def add_score(self, score) -> None:
+        """スコアの追加
+
+        Args:
+            score (int): 加える得点
+        """
+        # スコアを加える
+        self.score += score
+        # スコアの描画
+        self.draw()
 
 
 def main() -> None:
@@ -115,14 +154,17 @@ def main() -> None:
     Player.containers = all_sprites
     Coin.containers = coin_sprites, all_sprites
     Background.containers = all_sprites
+    Score.containers = all_sprites
     # 画像を読み込む
     background_image = pygame.image.load(os.path.join(settings.DATA, settings.BACKGROUND_IMAGE)).convert()
     coin_image = pygame.image.load(os.path.join(settings.DATA, settings.COIN_IMAGE)).convert()
     player_image = pygame.image.load(os.path.join(settings.DATA, settings.PLAYER_IMAGE)).convert()
     # 背景を作る
     Background(background_image, settings.SCREEN_SIZE)
+    # スコア表示を作る
+    score = Score(screen_rect)
     # プレーヤーを作る
-    player = Player(player_image, settings.PLAYER_SIZE, screen_rect, coin_sprites)
+    player = Player(player_image, settings.PLAYER_SIZE, screen_rect, coin_sprites, score)
     # プレーヤーがコインを獲得するときの効果音を取得する
     Player.coin_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.COIN_SOUND))
     # クロック
