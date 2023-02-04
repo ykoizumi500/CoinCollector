@@ -74,7 +74,9 @@ class Coin(pygame.sprite.Sprite):
         """画面の更新
 
         """
+        # 重力での移動
         self.rect.move_ip(self.velocity_x, self.velocity_y)
+        # 重力で加速させる
         self.velocity_y += settings.GRAVITY
         # 左右に衝突した時の処理
         if self.rect.left < self.screen.left or self.rect.right > self.screen.right:
