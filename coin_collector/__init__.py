@@ -65,8 +65,8 @@ class Coin(pygame.sprite.Sprite):
         self.rect.centerx = random.randint(0, screen.width)
         self.rect.top = random.randint(0, screen.height)
         # コインの速度をランダムに決める
-        self.velocity_x = random.randint(settings.VELOCITY_X_MIN, settings.VELOCITY_X_MAX)
-        self.velocity_y = random.randint(settings.VELOCITY_Y_MIN, settings.VELOCITY_Y_MAX)
+        self.velocity_x = random.randint(*settings.VELOCITY_X_RANGE)
+        self.velocity_y = random.randint(*settings.VELOCITY_Y_RANGE)
         # スクリーンの参照
         self.screen = screen
 
