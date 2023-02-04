@@ -52,9 +52,12 @@ class Player(pygame.sprite.Sprite):
 
 # コイン
 class Coin(pygame.sprite.Sprite):
+    """コイン
+
     """
-        コイン
-    """
+    # 重力
+    gravity = 1
+
     def __init__(self, image, size):
         super().__init__(self.containers)
         self.image = pygame.transform.scale(image, size)
@@ -64,7 +67,22 @@ class Coin(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         # 位置をランダムに決める
         self.rect.centerx = random.randint(100, 700)
-        self.rect.centery = random.randint(100, 500)
+        self.rect.centery = random.randint(50, 100)
+        # コインの速度をランダムに決める
+        self.velocity_x = random.randint(-10, 10)
+        self.velocity_y = random.randint(-10, 10)
+
+    def update(self):
+        """画面の更新
+
+        """
+        self.rect.move_ip(self.velocity_x, self.velocity_y)
+        self.velocity_y += self.gravity
+        # 左右に衝突した時の処理
+        if self.rect.left < SCREEN.left or self.rect.right > SCREEN.right:
+            self.velocity_x = - self.velocity_x
+        if self.rect.bottom > SCREEN.bottom:
+            self.kill()
 
 
 def main() -> None:
@@ -88,12 +106,6 @@ def main() -> None:
     Player.coin_sound = pygame.mixer.Sound(os.path.join("data", "coin.wav"))
     # 画像を読み込む
     coin_image = pygame.image.load(os.path.join("data", "coin.png")).convert()
-    # 100回繰り返す
-    for _ in range(100):
-        # コインを作る
-        coin = Coin(coin_image, [80, 80])
-        # コインをグループに追加する
-        coin_sprites.add(coin)
     # クロック
     clock = pygame.time.Clock()
     # ゲームループ
@@ -119,3 +131,7 @@ def main() -> None:
         down = keystate[pygame.K_DOWN] - keystate[pygame.K_UP]
         # 移動させる
         player.move(right, down)
+        # コインを作る
+        coin = Coin(coin_image, [80, 80])
+        # コインをグループに追加する
+        coin_sprites.add(coin)
