@@ -16,7 +16,7 @@ DATA = "data"
 COIN_IMAGE = "coin.png"
 
 # コインの大きさ
-COIN_SIZE = [80, 80]
+COIN_SIZE = [30, 30]
 
 # コイン獲得するときの効果音
 COIN_SOUND = "coin.wav"
