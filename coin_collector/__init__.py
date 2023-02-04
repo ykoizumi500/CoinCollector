@@ -11,6 +11,7 @@ import pygame
 # 画面のサイズ
 SCREEN = pygame.Rect(0, 0, 800, 600)
 
+
 # プレーヤー
 class Player(pygame.sprite.Sprite):
     """プレーヤー
@@ -28,6 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
+
     def move(self, right, down) -> None:
         """プレーヤを移動させる。
 
@@ -39,6 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip(right * self.speed, down * self.speed)
         # 衝突時の処理
         self.rect = self.rect.clamp(SCREEN)
+
 
 # コイン
 class Coin(pygame.sprite.Sprite):
@@ -57,6 +60,7 @@ class Coin(pygame.sprite.Sprite):
         # 位置をランダムに決める
         self.rect.centerx = random.randint(100, 700)
         self.rect.centery = random.randint(100, 500)
+
 
 def main() -> None:
     """ゲームの開始
