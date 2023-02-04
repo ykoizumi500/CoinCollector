@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
     # 移動する速度
     speed = 10
 
-    def __init__(self, filename, size):
+    def __init__(self, filename, size, coin):
         super().__init__(self.containers)
         # 画像を読み込む
         image = pygame.image.load(filename).convert()
@@ -30,6 +30,8 @@ class Player(pygame.sprite.Sprite):
         self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
+        # コインの参照
+        self.coin = coin
 
     def move(self, right, down) -> None:
         """プレーヤを移動させる。
@@ -40,8 +42,12 @@ class Player(pygame.sprite.Sprite):
         """
         # プレーヤーを移動させる
         self.rect.move_ip(right * self.speed, down * self.speed)
-        # 衝突時の処理
+        # 外枠に衝突した時の処理
         self.rect = self.rect.clamp(SCREEN)
+        # コインに衝突したときの処理
+        if pygame.sprite.spritecollide(self, self.coin, True):
+            # 効果音を鳴らす
+            self.coin_sound.play()
 
 
 # コイン
@@ -79,11 +85,13 @@ def main() -> None:
     Player.containers = all_sprites
     Coin.containers = coin_sprites, all_sprites
     # プレーヤーを作る
-    player = Player(os.path.join("img", "player.png"), [100, 100])
+    player = Player(os.path.join("data", "player.png"), [100, 100], coin_sprites)
+    # プレーヤーがコインを獲得するときの効果音を取得する
+    Player.coin_sound = pygame.mixer.Sound(os.path.join("data", "coin.wav"))
     # 3回繰り返す
-    for _ in range(3):
+    for _ in range(20):
         # コインを作る
-        coin = Coin(os.path.join("img", "coin.png"), [80, 80])
+        coin = Coin(os.path.join("data", "coin.png"), [80, 80])
         # コインをグループに追加する
         coin_sprites.add(coin)
     # クロック
