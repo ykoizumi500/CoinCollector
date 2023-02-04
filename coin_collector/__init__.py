@@ -88,7 +88,7 @@ def main() -> None:
     Player.coin_sound = pygame.mixer.Sound(os.path.join("data", "coin.wav"))
     # 画像を読み込む
     coin_image = pygame.image.load(os.path.join("data", "coin.png")).convert()
-    # 3回繰り返す
+    # 100回繰り返す
     for _ in range(100):
         # コインを作る
         coin = Coin(coin_image, [80, 80])
@@ -96,6 +96,7 @@ def main() -> None:
         coin_sprites.add(coin)
     # クロック
     clock = pygame.time.Clock()
+    # ゲームループ
     while True:
         # フレームレートの設定
         clock.tick(60)
