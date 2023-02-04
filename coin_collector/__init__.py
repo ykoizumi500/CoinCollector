@@ -48,6 +48,8 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, self.coin, True):
             # スコアを加える
             self.score.add_score(settings.COIN_SCORE)
+            # 残り時間を加える
+            self.score.add_time(settings.COIN_TIME)
             # 効果音を鳴らす
             self.coin_sound.play()
 
@@ -66,11 +68,11 @@ class Coin(pygame.sprite.Sprite):
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
         # 位置をランダムに決める
-        self.rect.centerx = random.randint(0, screen.width)
-        self.rect.top = random.randint(0, screen.height)
+        self.rect.centerx = random.randint(*settings.COIN_X_RANGE)
+        self.rect.centery = random.randint(*settings.COIN_Y_RANGE)
         # コインの速度をランダムに決める
-        self.velocity_x = random.randint(*settings.VELOCITY_X_RANGE)
-        self.velocity_y = random.randint(*settings.VELOCITY_Y_RANGE)
+        self.velocity_x = random.randint(*settings.COIN_VELOCITY_X_RANGE)
+        self.velocity_y = random.randint(*settings.COIN_VELOCITY_Y_RANGE)
         # スクリーンの参照
         self.screen = screen
 
@@ -79,7 +81,7 @@ class Coin(pygame.sprite.Sprite):
 
         """
         # 重力での移動
-        self.rect.move_ip(self.velocity_x, self.velocity_y)
+        self.rect.move_ip(int(self.velocity_x), int(self.velocity_y))
         # 重力で加速させる
         self.velocity_y += settings.GRAVITY
         # 左右に衝突した時の処理
@@ -111,6 +113,8 @@ class Score(pygame.sprite.Sprite):
         self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
         # スコアの設定
         self.score = 0
+        # 時間の設定
+        self.time = 1000
         # スクリーンの参照
         self.screen = screen
         # スコアの描画
@@ -121,11 +125,11 @@ class Score(pygame.sprite.Sprite):
 
         """
         # スコアの表示形式を設定する
-        self.image = self.sysfont.render(f"SCORE {self.score}", True, settings.SCORE_COLOR)
+        self.image = self.sysfont.render(f"TIME {self.time} SCORE {self.score}", True, settings.SCORE_COLOR)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
 
-    def add_score(self, score) -> None:
+    def add_score(self, score: int) -> None:
         """スコアの追加
 
         Args:
@@ -136,62 +140,120 @@ class Score(pygame.sprite.Sprite):
         # スコアの描画
         self.draw()
 
+    def get_score(self) -> int:
+        """スコアの取得
 
-def main() -> None:
-    """ゲームの開始
+        """
+        return self.score
 
-    ゲームを開始します。
+    def add_time(self, time: int) -> bool:
+        """残り時間の追加
+
+        Args:
+            time (int): 加える時間
+        """
+        # 時間を加える
+        self.time += time
+        # スコアの描画
+        self.draw()
+        return self.time > 0
+
+
+class Game:
+    """ ゲーム
+
     """
-    # 初期化
-    pygame.init()
-    # 画面のサイズを設定する
-    screen = pygame.display.set_mode(settings.SCREEN_SIZE)
-    screen_rect = pygame.Rect([0, 0], settings.SCREEN_SIZE)
-    pygame.display.set_caption(settings.TITLE)
-    # スプライトでまとめる
-    all_sprites = pygame.sprite.RenderUpdates()
-    coin_sprites = pygame.sprite.Group()
-    Player.containers = all_sprites
-    Coin.containers = coin_sprites, all_sprites
-    Background.containers = all_sprites
-    Score.containers = all_sprites
-    # 画像を読み込む
-    background_image = pygame.image.load(os.path.join(settings.DATA, settings.BACKGROUND_IMAGE)).convert()
-    coin_image = pygame.image.load(os.path.join(settings.DATA, settings.COIN_IMAGE)).convert()
-    player_image = pygame.image.load(os.path.join(settings.DATA, settings.PLAYER_IMAGE)).convert()
-    # 背景を作る
-    Background(background_image, settings.SCREEN_SIZE)
-    # スコア表示を作る
-    score = Score(screen_rect)
-    # プレーヤーを作る
-    player = Player(player_image, settings.PLAYER_SIZE, screen_rect, coin_sprites, score)
-    # プレーヤーがコインを獲得するときの効果音を取得する
-    Player.coin_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.COIN_SOUND))
-    # クロック
-    clock = pygame.time.Clock()
-    # ゲームループ
-    while True:
-        # フレームレートの設定
-        clock.tick(settings.FRAME_RATE)
-        # スプライトを更新
-        all_sprites.update()
-        dirty = all_sprites.draw(screen)
-        # 画面更新
-        pygame.display.update(dirty)
-        for event in pygame.event.get():
-            # 閉じるボタンが押されたら
-            if event.type == pygame.QUIT:
-                # 終了させる
-                sys.exit()
-        # キー操作の情報を受け取る
-        keystate = pygame.key.get_pressed()
-        # 右方向に移動する距離
-        right = keystate[pygame.K_RIGHT] - keystate[pygame.K_LEFT]
-        # 下方向に移動する距離
-        down = keystate[pygame.K_DOWN] - keystate[pygame.K_UP]
-        # 移動させる
-        player.move(right, down)
+    def __init__(self):
+        # 初期化
+        pygame.init()
+        # 画面のサイズを設定する
+        self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
+        self.screen_rect = pygame.Rect([0, 0], settings.SCREEN_SIZE)
+        pygame.display.set_caption(settings.TITLE)
+        # スプライトでまとめる
+        self.all_sprites = pygame.sprite.RenderUpdates()
+        self.coin_sprites = pygame.sprite.Group()
+        Player.containers = self.all_sprites
+        Coin.containers = self.coin_sprites, self.all_sprites
+        Background.containers = self.all_sprites
+        Score.containers = self.all_sprites
+        # データを読み込む
+        self.load_data()
+        # 背景を作る
+        Background(self.background_image, settings.SCREEN_SIZE)
+        # プレーヤーがコインを獲得するときの効果音を設定する
+        Player.coin_sound = self.coin_sound
+        # スコア表示を作る
+        self.score = Score(self.screen_rect)
+        # プレーヤーを作る
+        self.player = Player(self.player_image, settings.PLAYER_SIZE, self.screen_rect, self.coin_sprites, self.score)
+        # クロック
+        self.clock = pygame.time.Clock()
+        # コインの周期のカウント
+        self.coin_period = 0
+
+    def play(self) -> int:
+        """ ゲームループ
+
+        """
+        while True:
+            # フレームレートの設定
+            self.clock.tick(settings.FRAME_RATE)
+            # スプライトを更新
+            self.all_sprites.update()
+            dirty = self.all_sprites.draw(self.screen)
+            # 画面更新
+            pygame.display.update(dirty)
+            for event in pygame.event.get():
+                # 閉じるボタンが押されたら
+                if event.type == pygame.QUIT:
+                    # 終了させる
+                    break
+            else:
+                # キー操作の情報を受け取る
+                keystate = pygame.key.get_pressed()
+                # 右方向に移動する距離
+                right = keystate[pygame.K_RIGHT] - keystate[pygame.K_LEFT]
+                # 下方向に移動する距離
+                down = keystate[pygame.K_DOWN] - keystate[pygame.K_UP]
+                # 移動させる
+                self.player.move(right, down)
+                # コインを出現させる時になったら
+                if self.coin_period == settings.COIN_PERIOD:
+                    # コインを増やす
+                    self.add_coin()
+                    # コインのカウントをリセットする
+                    self.coin_period = 0
+                self.coin_period += 1
+                # 時間を減らして時間切れでないなら
+                if self.score.add_time(-1):
+                    # 続ける
+                    continue
+            return self.score.get_score()
+
+    def load_data(self) -> None:
+        """ 画像を読み込む
+
+        """
+        self.background_image = pygame.image.load(os.path.join(settings.DATA, settings.BACKGROUND_IMAGE)).convert()
+        self.coin_image = pygame.image.load(os.path.join(settings.DATA, settings.COIN_IMAGE)).convert()
+        self.player_image = pygame.image.load(os.path.join(settings.DATA, settings.PLAYER_IMAGE)).convert()
+        self.coin_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.COIN_SOUND))
+
+    def add_coin(self) -> None:
+        """コインを増やす
+
+        """
         # コインを作る
-        coin = Coin(coin_image, settings.COIN_SIZE, screen_rect)
+        coin = Coin(self.coin_image, settings.COIN_SIZE, self.screen_rect)
         # コインをグループに追加する
-        coin_sprites.add(coin)
+        self.coin_sprites.add(coin)
+
+
+def main():
+    """メイン
+
+    """
+    game = Game()
+    # プレイを始める
+    game.play()
