@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
 """Coin Collector Game
 
 コイン収集ゲーム
 """
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python3
 from . import main
 
