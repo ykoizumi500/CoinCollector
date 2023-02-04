@@ -10,7 +10,7 @@ import os
 import pygame
 from . import settings
 
-# プレーヤー
+
 class Player(pygame.sprite.Sprite):
     """プレーヤー
 
@@ -47,7 +47,6 @@ class Player(pygame.sprite.Sprite):
             self.coin_sound.play()
 
 
-# コイン
 class Coin(pygame.sprite.Sprite):
     """コイン
 
