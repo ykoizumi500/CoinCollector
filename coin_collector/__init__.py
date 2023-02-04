@@ -55,10 +55,8 @@ class Coin(pygame.sprite.Sprite):
     """
         コイン
     """
-    def __init__(self, filename, size):
+    def __init__(self, image, size):
         super().__init__(self.containers)
-        # 画像を読み込む
-        image = pygame.image.load(filename).convert()
         self.image = pygame.transform.scale(image, size)
         # 外縁を消す
         self.image.set_colorkey([0, 0, 0])
@@ -88,10 +86,12 @@ def main() -> None:
     player = Player(os.path.join("data", "player.png"), [100, 100], coin_sprites)
     # プレーヤーがコインを獲得するときの効果音を取得する
     Player.coin_sound = pygame.mixer.Sound(os.path.join("data", "coin.wav"))
+    # 画像を読み込む
+    coin_image = pygame.image.load(os.path.join("data", "coin.png")).convert()
     # 3回繰り返す
-    for _ in range(20):
+    for _ in range(100):
         # コインを作る
-        coin = Coin(os.path.join("data", "coin.png"), [80, 80])
+        coin = Coin(coin_image, [80, 80])
         # コインをグループに追加する
         coin_sprites.add(coin)
     # クロック
