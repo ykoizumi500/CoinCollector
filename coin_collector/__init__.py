@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
     # 移動する速度
     speed = 10
 
-    def __init__(self, image, size, screen, coin, score):
+    def __init__(self, image, size, coin, score, time):
         super().__init__(self.containers)
         # 画像を読み込む
         self.image = pygame.transform.scale(image, size)
@@ -27,11 +27,17 @@ class Player(pygame.sprite.Sprite):
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
         # スクリーンの参照
-        self.screen = screen
+        self.range = pygame.Rect(settings.PLAYER_MIN, settings.PLAYER_RANGE)
         # コインの参照
         self.coin = coin
         # スコアの参照
         self.score = score
+        # 残り時間の参照
+        self.time = time
+        # 位置を決める
+        self.rect.centerx = settings.PLAYER_X
+        self.rect.centery = settings.PLAYER_Y
+
 
     def move(self, right: int, down: int) -> None:
         """プレーヤを移動させる。
@@ -43,13 +49,13 @@ class Player(pygame.sprite.Sprite):
         # プレーヤーを移動させる
         self.rect.move_ip(right * self.speed, down * self.speed)
         # 外枠に衝突した時の処理
-        self.rect = self.rect.clamp(self.screen)
+        self.rect = self.rect.clamp(self.range)
         # コインに衝突したときの処理
         if pygame.sprite.spritecollide(self, self.coin, True):
             # スコアを加える
             self.score.add_score(settings.COIN_SCORE)
             # 残り時間を加える
-            self.score.add_time(settings.COIN_TIME)
+            self.time.add_time(settings.COIN_TIME)
             # 効果音を鳴らす
             self.coin_sound.play()
 
@@ -95,6 +101,7 @@ class Background(pygame.sprite.Sprite):
     """背景
 
     """
+
     def __init__(self, image, size):
         super().__init__(self.containers)
         # サイズに合わせる
@@ -107,25 +114,24 @@ class Score(pygame.sprite.Sprite):
     """スコア表示
 
     """
+
     def __init__(self, screen):
         super().__init__(self.containers)
         # フォントの設定
         self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
         # スコアの設定
         self.score = 0
-        # 時間の設定
-        self.time = 1000
         # スクリーンの参照
         self.screen = screen
         # スコアの描画
         self.draw()
 
     def draw(self) -> None:
-        """スコアの描画
+        """描画
 
         """
         # スコアの表示形式を設定する
-        self.image = self.sysfont.render(f"TIME {self.time} SCORE {self.score}", True, settings.SCORE_COLOR)
+        self.image = self.sysfont.render("{:0>5d}".format(self.score), True, settings.SCORE_COLOR)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
 
@@ -146,6 +152,35 @@ class Score(pygame.sprite.Sprite):
         """
         return self.score
 
+
+class Time(pygame.sprite.Sprite):
+    """残り時間表示
+
+    """
+
+    def __init__(self, screen, time):
+        super().__init__(self.containers)
+        # フォントの設定
+        self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
+        # スクリーンの参照
+        self.screen = screen
+        # 残り時間の設定
+        self.time = time
+        # 時間の描画
+        self.draw()
+
+
+    def draw(self) -> None:
+        """描画
+
+        """
+        # スコアの表示形式を設定する
+        self.image = self.sysfont.render("{:.2f}".format(self.time / settings.FRAME_RATE), True, settings.SCORE_COLOR)
+        # Rect（四角）オブジェクトも生成しておく
+        self.rect = self.image.get_rect()
+        # 位置を右にする
+        self.rect.right = self.screen.right
+
     def add_time(self, time: int) -> bool:
         """残り時間の追加
 
@@ -154,9 +189,18 @@ class Score(pygame.sprite.Sprite):
         """
         # 時間を加える
         self.time += time
-        # スコアの描画
+        # 時間の描画
         self.draw()
         return self.time > 0
+
+    def set_time(self, time: int) -> None:
+        """時間を設定する
+
+        """
+        # 時間を設定する
+        self.time = time
+        # 時間の描画
+        self.draw()
 
 
 class Game:
@@ -177,6 +221,7 @@ class Game:
         Coin.containers = self.coin_sprites, self.all_sprites
         Background.containers = self.all_sprites
         Score.containers = self.all_sprites
+        Time.containers = self.all_sprites
         # データを読み込む
         self.load_data()
         # 背景を作る
@@ -185,8 +230,10 @@ class Game:
         Player.coin_sound = self.coin_sound
         # スコア表示を作る
         self.score = Score(self.screen_rect)
+        # 時間表示を作る
+        self.time = Time(self.screen_rect, settings.TIME_LIMIT)
         # プレーヤーを作る
-        self.player = Player(self.player_image, settings.PLAYER_SIZE, self.screen_rect, self.coin_sprites, self.score)
+        self.player = Player(self.player_image, settings.PLAYER_SIZE, self.coin_sprites, self.score, self.time)
         # クロック
         self.clock = pygame.time.Clock()
         # コインの周期のカウント
@@ -208,28 +255,31 @@ class Game:
                 # 閉じるボタンが押されたら
                 if event.type == pygame.QUIT:
                     # 終了させる
-                    break
-            else:
-                # キー操作の情報を受け取る
-                keystate = pygame.key.get_pressed()
-                # 右方向に移動する距離
-                right = keystate[pygame.K_RIGHT] - keystate[pygame.K_LEFT]
-                # 下方向に移動する距離
-                down = keystate[pygame.K_DOWN] - keystate[pygame.K_UP]
-                # 移動させる
-                self.player.move(right, down)
-                # コインを出現させる時になったら
-                if self.coin_period == settings.COIN_PERIOD:
-                    # コインを増やす
-                    self.add_coin()
-                    # コインのカウントをリセットする
-                    self.coin_period = 0
-                self.coin_period += 1
-                # 時間を減らして時間切れでないなら
-                if self.score.add_time(-1):
-                    # 続ける
-                    continue
-            return self.score.get_score()
+                    return self.over()
+            # キー操作の情報を受け取る
+            keystate = pygame.key.get_pressed()
+            # 右方向に移動する距離
+            right = keystate[pygame.K_RIGHT] - keystate[pygame.K_LEFT]
+            # 下方向に移動する距離
+            down = keystate[pygame.K_DOWN] - keystate[pygame.K_UP]
+            # 移動させる
+            self.player.move(right, down)
+            # コインを出現させる時になったら
+            if self.coin_period == settings.COIN_PERIOD:
+                # コインを増やす
+                self.add_coin()
+                # コインの周期のカウントをリセットする
+                self.coin_period = 0
+            # コインの周期のカウントする
+            self.coin_period += 1
+            # 時間を減らして時間切れでないなら
+            if not self.time.add_time(-1):
+                return self.over()
+
+    def over(self) -> int:
+        # 残り時間をリセットする
+        self.time.set_time(0)
+        return self.score.get_score()
 
     def load_data(self) -> None:
         """ 画像を読み込む
