@@ -57,8 +57,8 @@ COIN_X_RANGE = [400, 450]
 COIN_Y_RANGE = [100, 250]
 
 # プレーヤーの移動範囲
-PLAYER_MIN = [0, 400]
-PLAYER_RANGE = [800, 200]
+PLAYER_X_RANGE = [0, 800]
+PLAYER_Y_RANGE = [400, 600]
 
 # プレーヤーの初期位置
 PLAYER_X = 400
