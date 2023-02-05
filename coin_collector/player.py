@@ -7,6 +7,7 @@
 import pygame
 from . import settings
 
+
 class Player(pygame.sprite.Sprite):
     """プレーヤー
 

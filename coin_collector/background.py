@@ -5,7 +5,6 @@
 """
 #!/usr/bin/env python3
 import pygame
-from . import settings
 
 
 class Background(pygame.sprite.Sprite):

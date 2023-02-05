@@ -6,7 +6,7 @@
 #!/usr/bin/env python3
 import random
 import pygame
-from . import settings, game
+from . import settings
 
 
 class Coin(pygame.sprite.Sprite):

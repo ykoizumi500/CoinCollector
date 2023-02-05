@@ -4,7 +4,6 @@
 ゲームのクラス
 """
 #!/usr/bin/env python3
-import random
 import os
 import pygame
 from . import settings, background, score, time, player, coin
