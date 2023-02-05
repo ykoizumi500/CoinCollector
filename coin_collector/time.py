@@ -21,11 +21,17 @@ class Time(pygame.sprite.Sprite):
         # 残り時間の表示
         self.image = None
         self.rect = None
+        # 音の有無
+        self.sound = False
 
     def update(self):
         """画面の更新
 
         """
+        # 1秒おきに
+        if self.sound and self.time % settings.FRAME_RATE == 0:
+            # 効果音をさせる
+            self.game.clock_sound.play()
         # スコアの表示形式を設定する
         self.image = self.sysfont.render(f"{self.time / settings.FRAME_RATE:>0.02f} s", True, settings.SCORE_COLOR)
         # Rect（四角）オブジェクトも生成しておく

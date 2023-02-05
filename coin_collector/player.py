@@ -15,10 +15,12 @@ class Player(pygame.sprite.Sprite):
     # 移動する速度
     speed = 10
 
-    def __init__(self, image, size, game):
+    def __init__(self, game):
         super().__init__(self.containers)
+        # ゲームの参照
+        self.game = game
         # 画像を読み込む
-        self.image = pygame.transform.scale(image, size)
+        self.image = game.player_image
         # 外縁を消す
         self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
@@ -30,8 +32,6 @@ class Player(pygame.sprite.Sprite):
         width = settings.PLAYER_Y_RANGE[1] - settings.PLAYER_Y_RANGE[0]
         # 移動できる範囲の設定
         self.range = pygame.Rect(left, right, height, width)
-        # ゲームの参照
-        self.game = game
 
     def move(self, right: int, down: int) -> None:
         """プレーヤを移動させる。
@@ -54,5 +54,5 @@ class Player(pygame.sprite.Sprite):
                 self.game.score.score += settings.COIN_SCORE
                 # 残り時間を加える
                 self.game.time.time += settings.COIN_TIME
-                # 効果音を鳴らす
+                # 効果音をさせる
                 self.game.coin_sound.play()

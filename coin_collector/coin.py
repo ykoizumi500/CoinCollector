@@ -14,10 +14,12 @@ class Coin(pygame.sprite.Sprite):
 
     """
 
-    def __init__(self, image, size, game):
+    def __init__(self, game):
         super().__init__(self.containers)
+        # ゲームの参照
+        self.game = game
         # サイズに合わせる
-        self.image = pygame.transform.scale(image, size)
+        self.image = game.coin_image
         # 外縁を消す
         self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
@@ -30,8 +32,6 @@ class Coin(pygame.sprite.Sprite):
         self.velocity_y = random.uniform(*settings.COIN_VELOCITY_Y_RANGE)
         # 有効化
         self.valid = True
-        # ゲームの参照
-        self.game = game
 
     def update(self):
         """画面の更新

@@ -34,7 +34,7 @@ class Game:
         # データを読み込む
         self.load_data()
         # 背景を作る
-        self.background = background.Background(self.background_image)
+        self.background = background.Background(self)
         # ゲームオーバーを作らない
         self.over = None
         # スコア表示を作る
@@ -42,7 +42,7 @@ class Game:
         # 時間表示を作る
         self.time = time.Time(self)
         # プレーヤーを作る
-        self.player = player.Player(self.player_image, settings.PLAYER_SIZE, self)
+        self.player = player.Player(self)
         # 背景をグループに加える
         self.all.add(self.background)
         # スコア表示をグループに加える
@@ -63,25 +63,6 @@ class Game:
         for coin_sprite in self.coin_group.sprites():
             coin_sprite.valid = valid
 
-    def reset(self):
-        """初期化
-
-        """
-        # コインを透過させない
-        self.set_coin_valid(True)
-        # 位置を決める
-        self.player.rect.centerx = settings.PLAYER_X
-        self.player.rect.centery = settings.PLAYER_Y
-        # 時間
-        self.time.time = settings.TIME_LIMIT
-        # スコアの初期化
-        self.score.score = 0
-        # コインの周期のカウントの初期化
-        self.coin_period = 0
-        # ゲームオーバを消す
-        for sprite in self.over_group.sprites():
-            sprite.kill()
-
     def update(self) -> None:
         """画面の更新
 
@@ -98,7 +79,20 @@ class Game:
         """ゲーム開始画面
 
         """
-        self.reset()
+        # コインを透過させない
+        self.set_coin_valid(True)
+        # 位置を決める
+        self.player.rect.centerx = settings.PLAYER_X
+        self.player.rect.centery = settings.PLAYER_Y
+        # 時間
+        self.time.time = settings.TIME_LIMIT
+        # スコアの初期化
+        self.score.score = 0
+        # コインの周期のカウントの初期化
+        self.coin_period = 0
+        # ゲームオーバを消す
+        for sprite in self.over_group.sprites():
+            sprite.kill()
         while True:
             # 画面の更新
             self.update()
@@ -118,6 +112,8 @@ class Game:
         """ ゲームループ
 
         """
+        # 時計を始める
+        self.time.sound = True
         while self.time.time > 0:
             # 画面の更新
             self.update()
@@ -155,6 +151,7 @@ class Game:
         ゲームオーバーの表示をする
         """
         # 残り時間をリセットする
+        self.time.sound = False
         self.time.time = 0
         # コインを透過させない
         self.set_coin_valid(False)
@@ -180,20 +177,26 @@ class Game:
 
 
     def load_data(self) -> None:
-        """ 画像を読み込む
+        """ 画像・音声を読み込む
 
         """
+        # ファイルからデータを読み込む
         self.background_image = pygame.image.load(os.path.join(settings.DATA, settings.BACKGROUND_IMAGE)).convert()
         self.coin_image = pygame.image.load(os.path.join(settings.DATA, settings.COIN_IMAGE)).convert()
         self.player_image = pygame.image.load(os.path.join(settings.DATA, settings.PLAYER_IMAGE)).convert()
-        self.coin_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.COIN_SOUND))
+        self.coin_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.COIN_SOUND))        
+        self.clock_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.CLOCK_SOUND))
+        # 大きさを変える
+        self.background_image = pygame.transform.scale(self.background_image, settings.SCREEN_SIZE)
+        self.coin_image = pygame.transform.scale(self.coin_image, settings.COIN_SIZE)
+        self.player_image = pygame.transform.scale(self.player_image, settings.PLAYER_SIZE)
 
     def add_coin(self) -> None:
         """コインを増やす
 
         """
         # コインを作る
-        my_coin = coin.Coin(self.coin_image, settings.COIN_SIZE, self)
+        my_coin = coin.Coin(self)
         # コインをグループに加える
         self.all.add(my_coin)
         self.coin_group.add(my_coin)
