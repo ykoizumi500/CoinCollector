@@ -17,10 +17,6 @@ class Score(pygame.sprite.Sprite):
         super().__init__(self.containers)
         # フォントの設定
         self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
-        # スコアの設定
-        self.score = 0
-        # スコアの描画
-        self.draw()
 
     def draw(self) -> None:
         """描画
@@ -42,8 +38,13 @@ class Score(pygame.sprite.Sprite):
         # スコアの描画
         self.draw()
 
-    def get_score(self) -> int:
-        """スコアの取得
+    def set_score(self, score: int) -> None:
+        """スコアの追加
 
+        Args:
+            score (int): 加える得点
         """
-        return self.score
+        # スコアを加える
+        self.score = score
+        # スコアの描画
+        self.draw()

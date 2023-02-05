@@ -32,9 +32,6 @@ class Player(pygame.sprite.Sprite):
         self.range = pygame.Rect(left, right, height, width)
         # ゲームの参照
         self.game = game
-        # 位置を決める
-        self.rect.centerx = settings.PLAYER_X
-        self.rect.centery = settings.PLAYER_Y
 
     def move(self, right: int, down: int) -> None:
         """プレーヤを移動させる。
@@ -48,10 +45,12 @@ class Player(pygame.sprite.Sprite):
         # 外枠に衝突した時の処理
         self.rect = self.rect.clamp(self.range)
         # コインに衝突したときの処理
-        if pygame.sprite.spritecollide(self, self.game.coin_sprites, True):
-            # スコアを加える
-            self.game.score.add_score(settings.COIN_SCORE)
-            # 残り時間を加える
-            self.game.time.add_time(settings.COIN_TIME)
-            # 効果音を鳴らす
-            self.game.coin_sound.play()
+        coin_collide = pygame.sprite.spritecollide(self, self.game.coin_sprites, True)
+        for coin in coin_collide:
+            if coin.valid:
+                # スコアを加える
+                self.game.score.add_score(settings.COIN_SCORE)
+                # 残り時間を加える
+                self.game.time.add_time(settings.COIN_TIME)
+                # 効果音を鳴らす
+                self.game.coin_sound.play()

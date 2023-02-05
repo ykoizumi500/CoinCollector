@@ -4,17 +4,26 @@
 # 画面のタイトル
 TITLE = "Coin Collector Game"
 
+# 時間切れのテキスト
+OVER_TEXT = "Game Over"
+
 # 画面のサイズ
 SCREEN_SIZE = [800, 600]
-
-# スコアのサイズ
-SCORE_SIZE = 50
 
 # フレームレート
 FRAME_RATE = 100
 
-# スコアの色
+# スコア表示のサイズ
+SCORE_SIZE = 50
+
+# スコア表示の色
 SCORE_COLOR = [0, 0, 0]
+
+# 時間切れ表示の色
+OVER_SIZE = 100
+
+# 時間切れ表示の色
+OVER_COLOR = [0, 0, 255]
 
 # データの場所
 DATA = "data"
@@ -35,13 +44,13 @@ COIN_SOUND = "coin.wav"
 COIN_PERIOD = 30
 
 # コイン獲得したときのスコア
-COIN_SCORE = 1
+COIN_SCORE = 10
 
 # コイン獲得したときの獲得時間(フレーム)
-COIN_TIME = 10
+COIN_TIME = 30
 
 # 制限時間(フレーム)
-TIME_LIMIT = 6000
+TIME_LIMIT = 600
 
 # プレーヤーの画像ファイル
 PLAYER_IMAGE = "player.png"

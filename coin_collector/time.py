@@ -13,16 +13,12 @@ class Time(pygame.sprite.Sprite):
 
     """
 
-    def __init__(self, screen, time):
+    def __init__(self, screen):
         super().__init__(self.containers)
         # フォントの設定
         self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
         # スクリーンの参照
         self.screen = screen
-        # 残り時間の設定
-        self.time = time
-        # 時間の描画
-        self.draw()
 
     def draw(self) -> None:
         """描画
@@ -35,7 +31,7 @@ class Time(pygame.sprite.Sprite):
         # 位置を右にする
         self.rect.right = self.screen.right
 
-    def add_time(self, time: int) -> bool:
+    def add_time(self, time: int) -> None:
         """残り時間の追加
 
         Args:
