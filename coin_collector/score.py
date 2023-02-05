@@ -12,39 +12,13 @@ class Score(pygame.sprite.Sprite):
     """スコア表示
 
     """
-
     def __init__(self):
         super().__init__(self.containers)
+        # スコアを初期化する
+        self.score = 0
         # フォントの設定
         self.sysfont = pygame.font.SysFont(None, settings.SCORE_SIZE)
-
-    def draw(self) -> None:
-        """描画
-
-        """
         # スコアの表示形式を設定する
         self.image = self.sysfont.render("{:0>5d}".format(self.score), True, settings.SCORE_COLOR)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
-
-    def add_score(self, score: int) -> None:
-        """スコアの追加
-
-        Args:
-            score (int): 加える得点
-        """
-        # スコアを加える
-        self.score += score
-        # スコアの描画
-        self.draw()
-
-    def set_score(self, score: int) -> None:
-        """スコアの追加
-
-        Args:
-            score (int): 加える得点
-        """
-        # スコアを加える
-        self.score = score
-        # スコアの描画
-        self.draw()

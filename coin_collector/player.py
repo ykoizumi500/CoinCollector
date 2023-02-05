@@ -45,11 +45,13 @@ class Player(pygame.sprite.Sprite):
         # 外枠に衝突した時の処理
         self.rect = self.rect.clamp(self.range)
         # コインに衝突したときの処理
-        coin_collide = pygame.sprite.spritecollide(self, self.game.coin_sprites, True)
+        coin_collide = pygame.sprite.spritecollide(self, self.game.coin_sprites, False)
         for coin in coin_collide:
             if coin.valid:
+                # コインを消す
+                coin.kill()
                 # スコアを加える
-                self.game.score.add_score(settings.COIN_SCORE)
+                self.game.score.score += settings.COIN_SCORE
                 # 残り時間を加える
                 self.game.time.add_time(settings.COIN_TIME)
                 # 効果音を鳴らす

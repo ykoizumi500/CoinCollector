@@ -25,7 +25,7 @@ class Time(pygame.sprite.Sprite):
 
         """
         # スコアの表示形式を設定する
-        self.image = self.sysfont.render("{:.2f}".format(self.time / settings.FRAME_RATE), True, settings.SCORE_COLOR)
+        self.image = self.sysfont.render("{:.2f} s".format(self.time / settings.FRAME_RATE), True, settings.SCORE_COLOR)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
         # 位置を右にする

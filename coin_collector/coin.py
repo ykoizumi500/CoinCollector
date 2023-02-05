@@ -49,5 +49,6 @@ class Coin(pygame.sprite.Sprite):
         # 左右に衝突した時の処理
         if self.rect.left < self.game.screen_rect.left or self.rect.right > self.game.screen_rect.right:
             self.velocity_x = - self.velocity_x
+        # 下に衝突したときの処理
         if self.rect.bottom > self.game.screen_rect.bottom:
             self.kill()

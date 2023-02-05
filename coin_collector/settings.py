@@ -50,7 +50,7 @@ COIN_SCORE = 10
 COIN_TIME = 30
 
 # 制限時間(フレーム)
-TIME_LIMIT = 600
+TIME_LIMIT = 6000
 
 # プレーヤーの画像ファイル
 PLAYER_IMAGE = "player.png"

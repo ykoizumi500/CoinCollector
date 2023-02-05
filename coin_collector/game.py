@@ -63,7 +63,7 @@ class Game:
         # 時間
         self.time.set_time(settings.TIME_LIMIT)
         # スコアの初期化
-        self.score.set_score(0)
+        self.score.score = 0
         # コインの周期のカウント
         self.coin_period = 0
         # ゲームオーバを消す
