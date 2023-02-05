@@ -5,7 +5,7 @@
 """
 #!/usr/bin/env python3
 import pygame
-from . import settings, game
+from . import settings
 
 
 class Over(pygame.sprite.Sprite):
@@ -19,13 +19,6 @@ class Over(pygame.sprite.Sprite):
         self.sysfont = pygame.font.SysFont(None, settings.OVER_SIZE)
         # ゲームの参照
         self.game = game
-        # 時間切れの描画
-        self.draw()
-
-    def draw(self) -> None:
-        """描画
-
-        """
         # スコアの表示形式を設定する
         self.image = self.sysfont.render(settings.OVER_TEXT, True, settings.OVER_COLOR)
         # Rect（四角）オブジェクトも生成しておく

@@ -15,41 +15,53 @@ class Game:
 
     """
     def __init__(self):
-        # 初期化
+        # 初期化する
         pygame.init()
         # 画面のサイズを設定する
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.screen_rect = pygame.Rect([0, 0], settings.SCREEN_SIZE)
         pygame.display.set_caption(settings.TITLE)
-        # スプライトでまとめる
-        self.all_sprites = pygame.sprite.RenderUpdates()
-        self.coin_sprites = pygame.sprite.Group()
-        self.over_sprites = pygame.sprite.Group()
-        player.Player.containers = self.all_sprites
-        coin.Coin.containers = self.coin_sprites, self.all_sprites
-        background.Background.containers = self.all_sprites
-        over.Over.containers = self.over_sprites, self.all_sprites
-        score.Score.containers = self.all_sprites
-        time.Time.containers = self.all_sprites
+        # グループでまとめる
+        self.all = pygame.sprite.RenderUpdates()
+        self.coin_group = pygame.sprite.Group()
+        self.over_group = pygame.sprite.Group()
+        player.Player.containers = self.all
+        coin.Coin.containers = self.coin_group, self.all
+        background.Background.containers = self.all
+        over.Over.containers = self.over_group, self.all
+        score.Score.containers = self.all
+        time.Time.containers = self.all
         # データを読み込む
         self.load_data()
         # 背景を作る
-        background.Background(self.background_image, settings.SCREEN_SIZE)
+        self.background = background.Background(self.background_image)
+        # ゲームオーバーを作らない
+        self.over = None
         # スコア表示を作る
-        self.score = score.Score()
+        self.score = score.Score(self)
         # 時間表示を作る
-        self.time = time.Time(self.screen_rect)
+        self.time = time.Time(self)
         # プレーヤーを作る
         self.player = player.Player(self.player_image, settings.PLAYER_SIZE, self)
+        # 背景をグループに加える
+        self.all.add(self.background)
+        # スコア表示をグループに加える
+        self.all.add(self.score)
+        # 時間表示をグループに加える
+        self.all.add(self.time)
+        # プレーヤーをグループに加える
+        self.all.add(self.player)
         # クロック
         self.clock = pygame.time.Clock()
+        # コインの周期のカウントの初期化
+        self.coin_period = 0
 
     def set_coin_valid(self, valid):
         """ コインの透明化
 
         """
-        for sprite in self.coin_sprites.sprites():
-            sprite.valid = valid
+        for coin_sprite in self.coin_group.sprites():
+            coin_sprite.valid = valid
 
     def reset(self):
         """初期化
@@ -61,13 +73,13 @@ class Game:
         self.player.rect.centerx = settings.PLAYER_X
         self.player.rect.centery = settings.PLAYER_Y
         # 時間
-        self.time.set_time(settings.TIME_LIMIT)
+        self.time.time = settings.TIME_LIMIT
         # スコアの初期化
         self.score.score = 0
-        # コインの周期のカウント
+        # コインの周期のカウントの初期化
         self.coin_period = 0
         # ゲームオーバを消す
-        for sprite in self.over_sprites.sprites():
+        for sprite in self.over_group.sprites():
             sprite.kill()
 
     def update(self) -> None:
@@ -77,17 +89,35 @@ class Game:
         # フレームレートの設定
         self.clock.tick(settings.FRAME_RATE)
         # スプライトを更新
-        self.all_sprites.update()
-        dirty = self.all_sprites.draw(self.screen)
+        self.all.update()
+        dirty = self.all.draw(self.screen)
         # 画面更新
         pygame.display.update(dirty)
+
+    def start(self) -> None:
+        """ゲーム開始画面
+
+        """
+        self.reset()
+        while True:
+            # 画面の更新
+            self.update()
+            for event in pygame.event.get():
+                # 閉じるボタンが押されたら
+                if event.type == pygame.QUIT:
+                    # 終了させる
+                    sys.exit()
+            # キー操作の情報を受け取る
+            keystate = pygame.key.get_pressed()
+            # スペースが押されたら
+            if keystate[pygame.K_SPACE]:
+                # ゲームを始める
+                self.play()
 
     def play(self) -> None:
         """ ゲームループ
 
         """
-        # 状態の初期化
-        self.reset()
         while self.time.time > 0:
             # 画面の更新
             self.update()
@@ -98,6 +128,9 @@ class Game:
                     sys.exit()
             # キー操作の情報を受け取る
             keystate = pygame.key.get_pressed()
+            # エスケープが押されたら
+            if keystate[pygame.K_ESCAPE]:
+                self.game_over()
             # 右方向に移動する距離
             right = keystate[pygame.K_RIGHT] - keystate[pygame.K_LEFT]
             # 下方向に移動する距離
@@ -113,7 +146,7 @@ class Game:
             # コインの周期のカウントする
             self.coin_period += 1
             # 時間を減らす
-            self.time.add_time(-1)
+            self.time.time -= 1
         # ゲームオーバー
         self.game_over()
 
@@ -122,11 +155,14 @@ class Game:
         ゲームオーバーの表示をする
         """
         # 残り時間をリセットする
-        self.time.set_time(0)
+        self.time.time = 0
         # コインを透過させない
         self.set_coin_valid(False)
         # 時間切れ表示をする
         self.over = over.Over(self)
+        # 時間切れ表示をグループに加える
+        self.all.add(self.over)
+        self.over_group.add(self.over)
         while True:
             # 画面の更新
             self.update()
@@ -138,8 +174,9 @@ class Game:
             # キー操作の情報を受け取る
             keystate = pygame.key.get_pressed()
             # エンターが押されたら
-            if keystate[pygame.K_SPACE]:
-                self.play()
+            if keystate[pygame.K_RETURN]:
+                # ゲーム再開する
+                self.start()
 
 
     def load_data(self) -> None:
@@ -157,5 +194,6 @@ class Game:
         """
         # コインを作る
         my_coin = coin.Coin(self.coin_image, settings.COIN_SIZE, self)
-        # コインをグループに追加する
-        self.coin_sprites.add(my_coin)
+        # コインをグループに加える
+        self.all.add(my_coin)
+        self.coin_group.add(my_coin)

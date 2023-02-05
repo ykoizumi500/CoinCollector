@@ -13,4 +13,4 @@ def main():
     """
     my_game = game.Game()
     # プレイを始める
-    my_game.play()
+    my_game.start()

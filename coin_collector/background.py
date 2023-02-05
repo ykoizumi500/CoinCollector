@@ -5,6 +5,7 @@
 """
 #!/usr/bin/env python3
 import pygame
+from . import settings
 
 
 class Background(pygame.sprite.Sprite):
@@ -12,9 +13,9 @@ class Background(pygame.sprite.Sprite):
 
     """
 
-    def __init__(self, image, size):
+    def __init__(self, image):
         super().__init__(self.containers)
         # サイズに合わせる
-        self.image = pygame.transform.scale(image, size)
+        self.image = pygame.transform.scale(image, settings.SCREEN_SIZE)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
