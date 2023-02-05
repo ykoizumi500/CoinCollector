@@ -4,7 +4,6 @@
 コイン収集ゲーム
 """
 #!/usr/bin/env python3
-import sys
 import random
 import os
 import pygame
@@ -37,7 +36,6 @@ class Player(pygame.sprite.Sprite):
         # 位置を決める
         self.rect.centerx = settings.PLAYER_X
         self.rect.centery = settings.PLAYER_Y
-
 
     def move(self, right: int, down: int) -> None:
         """プレーヤを移動させる。
@@ -74,11 +72,11 @@ class Coin(pygame.sprite.Sprite):
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
         # 位置をランダムに決める
-        self.rect.centerx = random.randint(*settings.COIN_X_RANGE)
-        self.rect.centery = random.randint(*settings.COIN_Y_RANGE)
+        self.rect.centerx = random.uniform(*settings.COIN_X_RANGE)
+        self.rect.centery = random.uniform(*settings.COIN_Y_RANGE)
         # コインの速度をランダムに決める
-        self.velocity_x = random.randint(*settings.COIN_VELOCITY_X_RANGE)
-        self.velocity_y = random.randint(*settings.COIN_VELOCITY_Y_RANGE)
+        self.velocity_x = random.uniform(*settings.COIN_VELOCITY_X_RANGE)
+        self.velocity_y = random.uniform(*settings.COIN_VELOCITY_Y_RANGE)
         # スクリーンの参照
         self.screen = screen
 
@@ -168,7 +166,6 @@ class Time(pygame.sprite.Sprite):
         self.time = time
         # 時間の描画
         self.draw()
-
 
     def draw(self) -> None:
         """描画
