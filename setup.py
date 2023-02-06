@@ -19,5 +19,5 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/ykoizumi500/CoinCollector",
     packages=setuptools.find_packages(),
-    python_requires='==3.10.9',
+    python_requires='!=3.11',
 )
