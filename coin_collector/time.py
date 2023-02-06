@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Coin Collector Game
-
-残り時間のクラス
-"""
 #!/usr/bin/env python3
 import pygame
 from . import settings
@@ -32,7 +28,7 @@ class Time(pygame.sprite.Sprite):
         if self.sound and self.time % settings.FRAME_RATE == 0:
             # 効果音をさせる
             self.game.clock_sound.play()
-        # スコアの表示形式を設定する
+        # 残り時間の表示形式を設定する
         self.image = self.sysfont.render(f"{self.time / settings.FRAME_RATE:>0.02f} s", True, settings.SCORE_COLOR)
         # Rect（四角）オブジェクトも生成しておく
         self.rect = self.image.get_rect()
