@@ -26,15 +26,15 @@ class Coin(pygame.sprite.Sprite):
         # コインの速度をランダムに決める
         self.velocity_x = random.uniform(*settings.COIN_VELOCITY_X_RANGE)
         self.velocity_y = random.uniform(*settings.COIN_VELOCITY_Y_RANGE)
-        # 有効化
-        self.valid = True
+        # 有効・無効の設定
+        self.valid = game.coin_valid
 
     def update(self):
         """画面の更新
 
         """
         # 透明化
-        if self.game.coin_valid:
+        if self.valid:
             self.image.set_alpha()
         else:
             self.image.set_alpha(127)
