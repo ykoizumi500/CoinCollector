@@ -35,7 +35,7 @@ python -m coin_collector
 エスケープキーで終了します。
 また、残り時間が０になると終了します。
 
-# ゲーム終了画面
+## ゲーム終了画面
 
 ![ゲーム終了画面](docs/over_screen.png)
 
