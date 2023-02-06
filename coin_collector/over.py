@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Coin Collector Game
-
-時間切れのクラス
-"""
 #!/usr/bin/env python3
 import pygame
 from . import settings

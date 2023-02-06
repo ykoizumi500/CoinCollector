@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Coin Collector Game
-
-コインのクラス
-"""
 #!/usr/bin/env python3
 import random
 import pygame
@@ -38,7 +34,7 @@ class Coin(pygame.sprite.Sprite):
 
         """
         # 透明化
-        if self.valid:
+        if self.game.coin_valid:
             self.image.set_alpha()
         else:
             self.image.set_alpha(127)
