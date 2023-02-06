@@ -8,8 +8,6 @@ class Player(pygame.sprite.Sprite):
     """プレーヤー
 
     """
-    # 移動する速度
-    speed = 10
 
     def __init__(self, game):
         super().__init__(self.containers)
@@ -28,6 +26,8 @@ class Player(pygame.sprite.Sprite):
         width = settings.PLAYER_Y_RANGE[1] - settings.PLAYER_Y_RANGE[0]
         # 移動できる範囲の設定
         self.range = pygame.Rect(left, right, height, width)
+        # 速さの設定
+        self.speed = settings.PLAYER_SPEED
 
     def move(self, right: int, down: int) -> None:
         """プレーヤを移動させる。
@@ -52,3 +52,15 @@ class Player(pygame.sprite.Sprite):
                 self.game.time.time += settings.COIN_TIME
                 # 効果音をさせる
                 self.game.coin_sound.play()
+        # 岩に衝突したときの処理
+        rock_collide = pygame.sprite.spritecollide(self, self.game.rock_group, False)
+        for rock in rock_collide:
+            if rock.valid:
+                # 岩を消す
+                rock.kill()
+                # スコアを加える
+                self.game.score.score += settings.ROCK_SCORE
+                # 残り時間を加える
+                self.game.time.time += settings.ROCK_TIME
+                # 効果音をさせる
+                self.game.rock_sound.play()

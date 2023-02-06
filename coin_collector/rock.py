@@ -5,8 +5,8 @@ import pygame
 from . import settings
 
 
-class Coin(pygame.sprite.Sprite):
-    """コイン
+class Rock(pygame.sprite.Sprite):
+    """岩
 
     """
 
@@ -15,7 +15,7 @@ class Coin(pygame.sprite.Sprite):
         # ゲームの参照
         self.game = game
         # サイズに合わせる
-        self.image = game.coin_image
+        self.image = game.rock_image
         # 外縁を消す
         self.image.set_colorkey([0, 0, 0])
         # Rect（四角）オブジェクトも生成しておく
@@ -27,7 +27,7 @@ class Coin(pygame.sprite.Sprite):
         self.velocity_x = random.uniform(*settings.VELOCITY_X_RANGE)
         self.velocity_y = random.uniform(*settings.VELOCITY_Y_RANGE)
         # 有効・無効の設定
-        self.valid = game.coin_valid
+        self.valid = game.rock_valid
 
     def update(self):
         """画面の更新
@@ -50,5 +50,5 @@ class Coin(pygame.sprite.Sprite):
             self.velocity_x = - self.velocity_x
         # 下に衝突したときの処理
         if self.rect.bottom > self.game.screen_rect.bottom:
-            # コインを消す
+            # 消す
             self.kill()

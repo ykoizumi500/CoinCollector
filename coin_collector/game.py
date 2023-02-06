@@ -3,7 +3,7 @@
 import sys
 import os
 import pygame
-from . import settings, over, background, score, time, player, coin
+from . import settings, over, background, score, time, player, coin, rock
 
 
 class Game:
@@ -20,9 +20,11 @@ class Game:
         # グループでまとめる
         self.all = pygame.sprite.RenderUpdates()
         self.coin_group = pygame.sprite.Group()
+        self.rock_group = pygame.sprite.Group()
         self.over_group = pygame.sprite.Group()
         player.Player.containers = self.all
         coin.Coin.containers = self.coin_group, self.all
+        rock.Rock.containers = self.rock_group, self.all
         background.Background.containers = self.all
         over.Over.containers = self.over_group, self.all
         score.Score.containers = self.all
@@ -51,6 +53,8 @@ class Game:
         self.clock = pygame.time.Clock()
         # コインの周期のカウントの初期化
         self.coin_period = 0
+        # 岩の周期のカウントの初期化
+        self.rock_period = 0
 
     def update(self) -> None:
         """画面の更新
@@ -70,6 +74,8 @@ class Game:
         """
         # コインを有効化
         self.coin_valid = True
+        # 岩を有効化
+        self.rock_valid = True
         # 位置を決める
         self.player.rect.centerx = settings.PLAYER_X
         self.player.rect.centery = settings.PLAYER_Y
@@ -124,12 +130,20 @@ class Game:
             self.player.move(right, down)
             # コインを出現させる時になったら
             if self.coin_period == settings.COIN_PERIOD:
-                # コインを増やす
+                # コインを出現させる
                 self.add_coin()
                 # コインの周期のカウントをリセットする
                 self.coin_period = 0
-            # コインの周期のカウントする
+            # コインの周期のカウントをする
             self.coin_period += 1
+            # 岩を出現させる時になったら
+            if self.rock_period == settings.ROCK_PERIOD:
+                # 岩を出現させる
+                self.add_rock()
+                # 岩の周期のカウントをリセットする
+                self.rock_period = 0
+            # 岩の周期のカウントをする
+            self.rock_period += 1
             # 時間を減らす
             self.time.time -= 1
         # ゲームオーバー
@@ -146,6 +160,10 @@ class Game:
         self.coin_valid = False
         for my_coin in self.coin_group.sprites():
             my_coin.valid = False
+        # 岩の無効化
+        self.rock_valid = False
+        for my_rock in self.rock_group.sprites():
+            my_rock.valid = False
         # 時間切れ表示をする
         self.over = over.Over(self)
         # 時間切れ表示をグループに加える
@@ -175,12 +193,18 @@ class Game:
         self.background_image = pygame.image.load(os.path.join(settings.DATA, settings.BACKGROUND_IMAGE)).convert()
         self.coin_image = pygame.image.load(os.path.join(settings.DATA, settings.COIN_IMAGE)).convert()
         self.player_image = pygame.image.load(os.path.join(settings.DATA, settings.PLAYER_IMAGE)).convert()
+        self.rock_image = pygame.image.load(os.path.join(settings.DATA, settings.ROCK_IMAGE)).convert()
         self.coin_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.COIN_SOUND))
+        self.rock_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.ROCK_SOUND))
         self.clock_sound = pygame.mixer.Sound(os.path.join(settings.DATA, settings.CLOCK_SOUND))
         # 大きさを変える
         self.background_image = pygame.transform.scale(self.background_image, settings.SCREEN_SIZE)
-        self.coin_image = pygame.transform.scale(self.coin_image, settings.COIN_SIZE)
         self.player_image = pygame.transform.scale(self.player_image, settings.PLAYER_SIZE)
+        self.coin_image = pygame.transform.scale(self.coin_image, settings.COIN_SIZE)
+        self.rock_image = pygame.transform.scale(self.rock_image, settings.ROCK_SIZE)
+        self.coin_sound.set_volume(settings.COIN_SOUND_SIZE)
+        self.rock_sound.set_volume(settings.ROCK_SOUND_SIZE)
+        self.clock_sound.set_volume(settings.CLOCK_SOUND_SIZE)
 
     def add_coin(self) -> None:
         """コインを増やす
@@ -191,3 +215,13 @@ class Game:
         # コインをグループに加える
         self.all.add(my_coin)
         self.coin_group.add(my_coin)
+
+    def add_rock(self) -> None:
+        """岩を増やす
+
+        """
+        # コインを作る
+        my_rock = rock.Rock(self)
+        # コインをグループに加える
+        self.all.add(my_rock)
+        self.rock_group.add(my_rock)
