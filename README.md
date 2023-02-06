@@ -8,6 +8,7 @@ CoinCollecterはコインを獲得するゲームです。
 
 ```bash:インストール
 git clone https://github.com/ykoizumi500/CoinCollector.git
+cd CoinCollector
 python -m pip install -r requirements.txt
 ```
 
