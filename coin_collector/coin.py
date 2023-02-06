@@ -35,8 +35,10 @@ class Coin(pygame.sprite.Sprite):
         """
         # 透明化
         if self.valid:
+            # 透明にしない
             self.image.set_alpha()
         else:
+            # 少し透明にする
             self.image.set_alpha(127)
         # 重力での移動
         self.rect.move_ip(int(self.velocity_x), int(self.velocity_y))
@@ -44,7 +46,9 @@ class Coin(pygame.sprite.Sprite):
         self.velocity_y += settings.GRAVITY
         # 左右に衝突した時の処理
         if self.rect.left < self.game.screen_rect.left or self.rect.right > self.game.screen_rect.right:
+            # 反射させる（反対向きに移動させる）
             self.velocity_x = - self.velocity_x
         # 下に衝突したときの処理
         if self.rect.bottom > self.game.screen_rect.bottom:
+            # コインを消す
             self.kill()

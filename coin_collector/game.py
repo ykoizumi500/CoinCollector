@@ -144,7 +144,7 @@ class Game:
         self.time.time = 0
         # コインの無効化
         self.coin_valid = False
-        for my_coin in coin_group.sprites():
+        for my_coin in self.coin_group.sprites():
             my_coin.valid = False
         # 時間切れ表示をする
         self.over = over.Over(self)
