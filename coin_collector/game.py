@@ -33,8 +33,6 @@ class Game:
         self.load_data()
         # 背景を作る
         self.background = background.Background(self)
-        # ゲームオーバーを作らない
-        self.over = None
         # スコア表示を作る
         self.score = score.Score(self)
         # 時間表示を作る
@@ -55,6 +53,10 @@ class Game:
         self.coin_period = 0
         # 岩の周期のカウントの初期化
         self.rock_period = 0
+        # コインを有効化
+        self.coin_valid = True
+        # 岩を有効化
+        self.rock_valid = True
 
     def update(self) -> None:
         """画面の更新
@@ -146,6 +148,8 @@ class Game:
             self.rock_period += 1
             # 時間を減らす
             self.time.time -= 1
+            # 得点を増やす
+            self.score.score += settings.FRAME_SCORE
         # ゲームオーバー
         self.game_over()
 
@@ -165,10 +169,10 @@ class Game:
         for my_rock in self.rock_group.sprites():
             my_rock.valid = False
         # 時間切れ表示をする
-        self.over = over.Over(self)
+        my_over = over.Over(self)
         # 時間切れ表示をグループに加える
-        self.all.add(self.over)
-        self.over_group.add(self.over)
+        self.all.add(my_over)
+        self.over_group.add(my_over)
         while True:
             # 画面の更新
             self.update()
@@ -183,7 +187,6 @@ class Game:
             if keystate[pygame.K_RETURN]:
                 # ゲーム再開する
                 self.start()
-
 
     def load_data(self) -> None:
         """ 画像・音声を読み込む
