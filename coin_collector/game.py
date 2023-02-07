@@ -13,6 +13,7 @@ class Game:
     def __init__(self):
         # 初期化する
         pygame.init()
+        pygame.mixer.init()
         # 画面のサイズを設定する
         self.screen = pygame.display.set_mode(settings.SCREEN_SIZE)
         self.screen_rect = pygame.Rect([0, 0], settings.SCREEN_SIZE)
